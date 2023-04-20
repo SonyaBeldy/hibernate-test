@@ -28,13 +28,25 @@ public class App
         try {
             session.beginTransaction();
 
-            Person person = session.get(Person.class, 2);
-            Item item = session.get(Item.class, 1);
-            //из старого владельца
-            item.getOwner().getItems().remove(item);
+            Person person = new Person("Test cascading", 30);
 
-            item.setOwner(person);
-            person.getItems().add(item);
+            Item item = new Item("Test cascading item", person);
+            person.setItems(new ArrayList<>(Collections.singletonList(item)));
+
+            session.persist(person);
+
+
+//            Person person = session.get(Person.class, 2);
+//            Item item = session.get(Item.class, 1);
+//            //из старого владельца
+//            item.getOwner().getItems().remove(item);
+//
+//            item.setOwner(person);
+//            person.getItems().add(item);
+
+
+
+
 
 //            //SQL
 //            session.remove(person);
