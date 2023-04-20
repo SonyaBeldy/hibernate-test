@@ -31,7 +31,7 @@ public class App
             session.beginTransaction();
 
             Citizen citizen = new Citizen("Test person", 30);
-            Passport passport = new Passport(citizen, 123123);
+            Passport passport = new Passport( 123123);
 
             citizen.setPassport(passport);
 

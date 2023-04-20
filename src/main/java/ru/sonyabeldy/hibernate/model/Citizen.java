@@ -59,5 +59,6 @@ public class Citizen {
 
     public void setPassport(Passport passport) {
         this.passport = passport;
+        passport.setCitizen(this);
     }
 }

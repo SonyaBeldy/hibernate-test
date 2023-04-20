@@ -19,8 +19,7 @@ public class Passport implements Serializable {
     public Passport() {
     }
 
-    public Passport(Citizen citizen, int passportNumber) {
-        this.citizen = citizen;
+    public Passport(int passportNumber) {
         this.passportNumber = passportNumber;
     }
 
