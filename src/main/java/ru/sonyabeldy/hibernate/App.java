@@ -30,8 +30,9 @@ public class App
 
             Person person = new Person("Test cascading", 30);
 
-            Item item = new Item("Test cascading item", person);
-            person.setItems(new ArrayList<>(Collections.singletonList(item)));
+            person.addItem(new Item("Item 1"));
+            person.addItem(new Item("Item 2"));
+            person.addItem(new Item("Item 3"));
 
             session.persist(person);
 
