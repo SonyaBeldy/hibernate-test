@@ -3,10 +3,7 @@ package ru.sonyabeldy.hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import ru.sonyabeldy.hibernate.model.Citizen;
-import ru.sonyabeldy.hibernate.model.Item;
-import ru.sonyabeldy.hibernate.model.Passport;
-import ru.sonyabeldy.hibernate.model.Person;
+import ru.sonyabeldy.hibernate.model.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,26 +18,30 @@ public class App
     public static void main( String[] args )
     {
         Configuration configuration = new Configuration()
-                .addAnnotatedClass(Citizen.class)
-                .addAnnotatedClass(Passport.class);
+                .addAnnotatedClass(Actor.class)
+                .addAnnotatedClass(Movie.class);
 
         SessionFactory sessionFactory = configuration.buildSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
 
-        try {
+        try (sessionFactory) {
+            Session session = sessionFactory.getCurrentSession();
             session.beginTransaction();
 
-            Citizen citizen = new Citizen("Test person", 30);
-            Passport passport = new Passport( 123123);
+            Movie movie = new Movie("Pulp Fiction", 1994);
+            Actor actor1 = new Actor("Harvey Keitel", 81);
+            Actor actor2 = new Actor("Samuel L. Jackson", 72);
 
-            citizen.setPassport(passport);
+            movie.setActors(new ArrayList<>(List.of(actor1, actor2)));
 
-            session.persist(citizen);
+            actor1.setMovies(new ArrayList<>(Collections.singletonList(movie)));
+            actor2.setMovies(new ArrayList<>(Collections.singletonList(movie)));
+
+            session.save(movie);
+
+            session.save(actor1);
+            session.save(actor2);
 
             session.getTransaction().commit();
-
-        } finally {
-            sessionFactory.close();
         }
     }
 }
