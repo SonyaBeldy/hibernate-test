@@ -1,8 +1,10 @@
 package ru.sonyabeldy.hibernate;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.w3c.dom.ls.LSOutput;
 import ru.sonyabeldy.hibernate.model.*;
 
 import java.util.ArrayList;
@@ -18,31 +20,44 @@ public class App
     public static void main( String[] args )
     {
         Configuration configuration = new Configuration()
-                .addAnnotatedClass(Actor.class)
-                .addAnnotatedClass(Movie.class);
+                .addAnnotatedClass(Person.class)
+                .addAnnotatedClass(Item.class);
 
         SessionFactory sessionFactory = configuration.buildSessionFactory();
 
-        try (sessionFactory) {
+        try {
             Session session = sessionFactory.getCurrentSession();
             session.beginTransaction();
 
 
-            Actor actor = session.get(Actor.class, 2);
-            System.out.println(actor.getMovies());
-
-            Movie movieToRemove = actor.getMovies().get(0);
-
-            actor.getMovies().remove(0);
-            movieToRemove.getActors().remove(actor);
-
-//            Movie movie = session.get(Movie.class, 1);
-//            System.out.println(movie.getActors());
-//
-//            Actor actor = session.get(Actor.class, 1);
-//            System.out.println(actor.getMovies());
+            Person person = session.get(Person.class, 1);
+            System.out.println("Got Person from table");
+            System.out.println(person);
 
             session.getTransaction().commit();
+            System.out.println("Session close");
+
+            //Открываем сессию и транзакцию еще раз
+            session = sessionFactory.getCurrentSession();
+            session.beginTransaction();
+
+            System.out.println("In second session");
+
+            person = session.merge(person);
+
+            //альтернативный вариант загрузки сущностей
+            List<Item> items = session.createQuery("select i from Item i where i.owner.id=:personId", Item.class)
+                    .setParameter("personId", person.getId()).getResultList();
+            System.out.println(items);
+
+//            Hibernate.initialize(person.getItems());
+            session.getTransaction().commit();
+
+//            System.out.println("Out of session");
+//            System.out.println(person.getItems());
+
+        } finally {
+            sessionFactory.close();
         }
     }
 }
